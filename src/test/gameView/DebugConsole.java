@@ -114,7 +114,6 @@ public class DebugConsole extends JDialog implements WindowListener{
      */
     @Override
     public void windowIconified(WindowEvent windowEvent) {
-
     }
 
     /**
