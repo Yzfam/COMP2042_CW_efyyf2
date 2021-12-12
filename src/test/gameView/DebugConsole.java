@@ -123,7 +123,6 @@ public class DebugConsole extends JDialog implements WindowListener{
      */
     @Override
     public void windowDeiconified(WindowEvent windowEvent) {
-
     }
 
     /**
