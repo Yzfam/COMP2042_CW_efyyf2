@@ -15,7 +15,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test;
+package test.gameController;
+
+import test.gameModel.Wall;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -23,7 +25,9 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 
-
+/**
+ * This is a class that controls the Debug Console Window.
+ */
 public class DebugPanel extends JPanel {
 
     private static final Color DEF_BKG = Color.WHITE;
@@ -37,6 +41,10 @@ public class DebugPanel extends JPanel {
 
     private Wall wall;
 
+    /**
+     * This is a method that initializes the Debug Panel Window, creates skip level and reset ball button as well as changing the levels and speed of ball.
+     * @param wall wall object in wall class.
+     */
     public DebugPanel(Wall wall){
 
         this.wall = wall;
@@ -57,17 +65,33 @@ public class DebugPanel extends JPanel {
 
     }
 
+    /**
+     * This is a private method that initialize the Debug Panel.
+     */
     private void initialize(){
         this.setBackground(DEF_BKG);
         this.setLayout(new GridLayout(2,2));
     }
 
+    /**
+     * This is a method that creates the button in Debug Panel.
+     * @param title name of the button.
+     * @param e any activities done by user.
+     * @return returns a button.
+     */
     private JButton makeButton(String title, ActionListener e){
         JButton out = new JButton(title);
         out.addActionListener(e);
         return  out;
     }
 
+    /**
+     * This is a private method that creates the slider in Debug Panel.
+     * @param min minimum value
+     * @param max mas value
+     * @param e any activities done by user.
+     * @return returns the slider
+     */
     private JSlider makeSlider(int min, int max, ChangeListener e){
         JSlider out = new JSlider(min,max);
         out.setMajorTickSpacing(1);
@@ -77,6 +101,11 @@ public class DebugPanel extends JPanel {
         return out;
     }
 
+    /**
+     * This is a method that sets the speed of ball in X and Y axis.
+     * @param x speed of ball in X axis.
+     * @param y speed of ball in Y axis.
+     */
     public void setValues(int x,int y){
         ballXSpeed.setValue(x);
         ballYSpeed.setValue(y);

@@ -15,27 +15,43 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test;
+package test.gameModel;
+
+
+import test.gameView.GameBoard;
+import test.gameView.HomeMenu;
+import test.gameView.InfoMenu;
+import test.gameView.ScoreMenu;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
-import java.awt.event.WindowListener;
 
 
+/**
+ * This public class is responsible for the game frame in the game.
+ */
 public class GameFrame extends JFrame implements WindowFocusListener {
 
     private static final String DEF_TITLE = "Brick Destroy";
 
     private GameBoard gameBoard;
     private HomeMenu homeMenu;
+    private InfoMenu infoMenu;
+    private ScoreMenu scoreMenu;
+
+
 
     private boolean gaming;
 
+    /**
+     * This is a public method that creates the home menu.
+     */
     public GameFrame(){
         super();
+
+        setResizable(false);
 
         gaming = false;
 
@@ -45,6 +61,10 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
         homeMenu = new HomeMenu(this,new Dimension(450,300));
 
+        infoMenu = new InfoMenu(this, new Dimension(600, 450));
+
+        scoreMenu = new ScoreMenu(this, new Dimension(600, 450));
+
         this.add(homeMenu,BorderLayout.CENTER);
 
         this.setUndecorated(true);
@@ -52,6 +72,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     }
 
+    /**
+     * This is a public method that initialises the game frame.
+     */
     public void initialize(){
         this.setTitle(DEF_TITLE);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -60,6 +83,48 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         this.setVisible(true);
     }
 
+    /**
+     * This is a public method that brings user to the home menu by closing the info menu.
+     */
+    public void enableHomeMenu() {
+        this.dispose();
+        this.remove(infoMenu);
+        this.add(homeMenu,BorderLayout.CENTER);
+        this.setUndecorated(false);
+        initialize();
+    }
+
+    public void enableHomeMenu2() {
+        this.dispose();
+        this.remove(scoreMenu);
+        this.add(homeMenu,BorderLayout.CENTER);
+        this.setUndecorated(false);
+        initialize();
+    }
+
+    /**
+     * This is a public method that brings user to the info menu by closing the home menu.
+     */
+    public void enableInfoMenu(){
+        this.dispose();
+        this.remove(homeMenu);
+        this.add(infoMenu,BorderLayout.CENTER);
+        this.setUndecorated(false);
+        initialize();
+    }
+
+    public void enableScoreMenu(){
+
+        this.dispose();
+        this.remove(homeMenu);
+        this.add(scoreMenu,BorderLayout.CENTER);
+        this.setUndecorated(false);
+        initialize();
+    }
+
+    /**
+     * This is a public method that brings user to the game window by closing the home menu.
+     */
     public void enableGameBoard(){
         this.dispose();
         this.remove(homeMenu);
@@ -71,6 +136,9 @@ public class GameFrame extends JFrame implements WindowFocusListener {
 
     }
 
+    /**
+     * This is a private method that sets the game frame.
+     */
     private void autoLocate(){
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (size.width - this.getWidth()) / 2;
@@ -79,6 +147,10 @@ public class GameFrame extends JFrame implements WindowFocusListener {
     }
 
 
+    /**
+     * This is a public method that detect if any key activities happened during the game.
+     * @param windowEvent to detect if any key activities has happened or not.
+     */
     @Override
     public void windowGainedFocus(WindowEvent windowEvent) {
         /*
@@ -92,10 +164,15 @@ public class GameFrame extends JFrame implements WindowFocusListener {
         gaming = true;
     }
 
+    /**
+     * This is a method that see if the window has lost focus or not.
+     * @param windowEvent to detect if any key activities has happened or not.
+     */
     @Override
     public void windowLostFocus(WindowEvent windowEvent) {
         if(gaming)
             gameBoard.onLostFocus();
 
     }
+
 }

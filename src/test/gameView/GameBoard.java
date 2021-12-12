@@ -15,7 +15,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package test;
+package test.gameView;
+
+import test.gameController.Ball;
+import test.gameController.Brick;
+import test.gameModel.Player;
+import test.gameModel.Wall;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +28,9 @@ import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 
 
-
+/**
+ * This class displays the screen when the game is running.
+ */
 public class GameBoard extends JComponent implements KeyListener,MouseListener,MouseMotionListener {
 
     private static final String CONTINUE = "Continue";
@@ -31,19 +38,23 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private static final String EXIT = "Exit";
     private static final String PAUSE = "Pause Menu";
     private static final int TEXT_SIZE = 30;
-    private static final Color MENU_COLOR = new Color(0,255,0);
+    private static final Color MENU_COLOR = new Color(255, 251, 0);
+
+    Toolkit t=Toolkit.getDefaultToolkit();
+    private Image image = t.getImage("src/test/image3.jpg");
 
 
     private static final int DEF_WIDTH = 600;
     private static final int DEF_HEIGHT = 450;
 
-    private static final Color BG_COLOR = Color.WHITE;
+    private static final Color BG_COLOR = Color.black;
 
     private Timer gameTimer;
 
     private Wall wall;
 
     private String message;
+    private String score;
 
     private boolean showPauseMenu;
 
@@ -57,6 +68,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private DebugConsole debugConsole;
 
 
+    /**
+     * This is a constructor that displays the screen when the game is running, showing the status of the game.
+     * @param owner passing in the input the owner of the system.
+     */
     public GameBoard(JFrame owner){
         super();
 
@@ -70,6 +85,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
         this.initialize();
         message = "";
+
+        score = "";
+
         wall = new Wall(new Rectangle(0,0,DEF_WIDTH,DEF_HEIGHT),30,3,6/2,new Point(300,430));
 
         debugConsole = new DebugConsole(owner,wall,this);
@@ -79,11 +97,12 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         gameTimer = new Timer(10,e ->{
             wall.move();
             wall.findImpacts();
-            message = String.format("Bricks: %d Balls %d",wall.getBrickCount(),wall.getBallCount());
+            message = String.format("Bricks: %d Balls: %d",wall.getBrickCount(),wall.getBallCount());
+            score = String.format("Score: %d ",wall.getScore());
             if(wall.isBallLost()){
                 if(wall.ballEnd()){
                     wall.wallReset();
-                    message = "Game over";
+                    message = "Game over!";
                 }
                 wall.ballReset();
                 gameTimer.stop();
@@ -108,7 +127,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     }
 
 
-
+    /**
+     * This is a private method that initialize the screen when the game is running.
+     * It is responsible for setting the frame size and detect any activities done to the window.
+     */
     private void initialize(){
         this.setPreferredSize(new Dimension(DEF_WIDTH,DEF_HEIGHT));
         this.setFocusable(true);
@@ -119,14 +141,19 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     }
 
 
+    /**
+     * This public method paints the game board, ball and the slider and also display the game status on the screen.
+     * @param g passing in the graphics.
+     */
     public void paint(Graphics g){
 
         Graphics2D g2d = (Graphics2D) g;
 
         clear(g2d);
 
-        g2d.setColor(Color.BLUE);
+        g2d.setColor(Color.blue);
         g2d.drawString(message,250,225);
+        g2d.drawString(score,250,255);
 
         drawBall(wall.ball,g2d);
 
@@ -142,6 +169,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         Toolkit.getDefaultToolkit().sync();
     }
 
+    /**
+     * This is a private method that clears the screen.
+     * @param g2d passing in the 2d graphics.
+     */
     private void clear(Graphics2D g2d){
         Color tmp = g2d.getColor();
         g2d.setColor(BG_COLOR);
@@ -149,6 +180,11 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmp);
     }
 
+    /**
+     * This is a private method that creates the brick in the game screen.
+     * @param brick passing in the brick variable from the brick class.
+     * @param g2d passing in the 2d graphics.
+     */
     private void drawBrick(Brick brick,Graphics2D g2d){
         Color tmp = g2d.getColor();
 
@@ -162,10 +198,15 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmp);
     }
 
-    private void drawBall(Ball ball,Graphics2D g2d){
+    /**
+     * This is a private method that creates the ball in the game screen.
+     * @param ball passing in the ball variable from the ball class.
+     * @param g2d passing in the 2d graphics.
+     */
+    private void drawBall(Ball ball, Graphics2D g2d){
         Color tmp = g2d.getColor();
 
-        Shape s = ball.getBallFace();
+        Shape s = ball.getBallShape();
 
         g2d.setColor(ball.getInnerColor());
         g2d.fill(s);
@@ -176,7 +217,12 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmp);
     }
 
-    private void drawPlayer(Player p,Graphics2D g2d){
+    /**
+     * This is a private method that creates the player in the game screen.
+     * @param p passing in the player variable from the player class.
+     * @param g2d passing in the 2d graphics.
+     */
+    private void drawPlayer(Player p, Graphics2D g2d){
         Color tmp = g2d.getColor();
 
         Shape s = p.getPlayerFace();
@@ -189,11 +235,19 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmp);
     }
 
+    /**
+     * This is a private method that calls the obscureGameBoard and draws the pause menu screen.
+     * @param g2d passing in the 2d graphics.
+     */
     private void drawMenu(Graphics2D g2d){
         obscureGameBoard(g2d);
         drawPauseMenu(g2d);
     }
 
+    /**
+     * This is a private method that draws the pause menu screen and controls the view of it
+     * @param g2d passing in the 2d graphics.
+     */
     private void obscureGameBoard(Graphics2D g2d){
 
         Composite tmp = g2d.getComposite();
@@ -209,6 +263,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         g2d.setColor(tmpColor);
     }
 
+    /**
+     * This is a private method that draws the words and boxes of "continue", "restart" and "exit" in the pause menu.
+     * @param g2d passing in the 2d graphics.
+     */
     private void drawPauseMenu(Graphics2D g2d){
         Font tmpFont = g2d.getFont();
         Color tmpColor = g2d.getColor();
@@ -267,6 +325,10 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     public void keyTyped(KeyEvent keyEvent) {
     }
 
+    /**
+     * This is a public method that implement the method in KeyListener and receive any activities done by the user using the keys
+     * @param keyEvent passing in any keys pressed by user
+     */
     @Override
     public void keyPressed(KeyEvent keyEvent) {
         switch(keyEvent.getKeyCode()){
@@ -296,11 +358,19 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         }
     }
 
+    /**
+     * This is a public method that stops the player's movement once the key is not pressed.
+     * @param keyEvent passing in any keys pressed by user.
+     */
     @Override
     public void keyReleased(KeyEvent keyEvent) {
         wall.player.stop();
     }
 
+    /**
+     * This is s public method that detect if the user pressed "continue", "restart" and "exit".
+     * @param mouseEvent passing in any mouse movement performed by user.
+     */
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
         Point p = mouseEvent.getPoint();
@@ -323,31 +393,55 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     }
 
+    /**
+     * This is a method that repaint the button when is clicked by the user.
+     * @param mouseEvent passing in any mouse movement performed by user.
+     */
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
 
     }
 
+    /**
+     * This is a method that will be called when the mouse is released by the user.
+     * @param mouseEvent passing in any mouse movement performed by user.
+     */
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
 
     }
 
+    /**
+     * This is a method that will be called when the mouse enters a component.
+     * @param mouseEvent passing in any mouse movement performed by user.
+     */
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {
 
     }
 
+    /**
+     * This is a method that will be called when the mouse exits a component.
+     * @param mouseEvent event on mouse.
+     */
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
 
     }
 
+    /**
+     * This is a method that will be calledwhen a mouse button is pressed on a component and then dragged
+     * @param mouseEvent event on mouse.
+     */
     @Override
     public void mouseDragged(MouseEvent mouseEvent) {
 
     }
 
+    /**
+     * This is a public method that change the cursor appearance when it is on "continue", "restart" and "exit".
+     * @param mouseEvent passing in any mouse movement performed by user.
+     */
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
         Point p = mouseEvent.getPoint();
@@ -362,6 +456,9 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
         }
     }
 
+    /**
+     * This is a public method that shows on the screen if the window is not in focus or not.
+     */
     public void onLostFocus(){
         gameTimer.stop();
         message = "Focus Lost";

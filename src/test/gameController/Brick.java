@@ -1,4 +1,4 @@
-package test;
+package test.gameController;
 
 import java.awt.*;
 import java.awt.Point;
@@ -6,9 +6,9 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.Random;
 
+
 /**
- * Created by filippo on 04/09/16.
- *
+ * This is an abstract class that controls everything about the brick.
  */
 abstract public class Brick  {
 
@@ -22,8 +22,9 @@ abstract public class Brick  {
     public static final int LEFT_IMPACT = 300;
     public static final int RIGHT_IMPACT = 400;
 
-
-
+    /**
+     * This is a public class under Brick that has the features of the brick which are the cracks.
+     */
     public class Crack{
 
         private static final int CRACK_SECTIONS = 3;
@@ -44,6 +45,11 @@ abstract public class Brick  {
         private int steps;
 
 
+        /**
+         * This is a constructor that creates the crack.
+         * @param crackDepth depth of the crack of bricks.
+         * @param steps the crack steps of bricks.
+         */
         public Crack(int crackDepth, int steps){
 
             crack = new GeneralPath();
@@ -53,17 +59,28 @@ abstract public class Brick  {
         }
 
 
-
+        /**
+         * This is a method that is used to draw the crack
+         * @return returns the crack
+         */
         public GeneralPath draw(){
 
             return crack;
         }
 
+        /**
+         * This is a method that resets the crack
+         */
         public void reset(){
             crack.reset();
         }
 
-        protected void makeCrack(Point2D point, int direction){
+        /**
+         * This is a method that creates the crack based on the point of impact
+         * @param point the point of impact
+         * @param direction the direction of the crack
+         */
+        public void makeCrack(Point2D point, int direction){
             Rectangle bounds = Brick.this.brickFace.getBounds();
 
             Point impact = new Point((int)point.getX(),(int)point.getY());
@@ -103,6 +120,11 @@ abstract public class Brick  {
             }
         }
 
+        /**
+         * This is a method that creates random cracks from the start to the end point.
+         * @param start starting point.
+         * @param end ending point.
+         */
         protected void makeCrack(Point start, Point end){
 
             GeneralPath path = new GeneralPath();
@@ -110,8 +132,8 @@ abstract public class Brick  {
 
             path.moveTo(start.x,start.y);
 
-            double w = (end.x - start.x) / (double)steps;
-            double h = (end.y - start.y) / (double)steps;
+            double width = (end.x - start.x) / (double)steps;
+            double height = (end.y - start.y) / (double)steps;
 
             int bound = crackDepth;
             int jump  = bound * 5;
@@ -120,8 +142,8 @@ abstract public class Brick  {
 
             for(int i = 1; i < steps;i++){
 
-                x = (i * w) + start.x;
-                y = (i * h) + start.y + randomInBounds(bound);
+                x = (i * width) + start.x;
+                y = (i * height) + start.y + randomInBounds(bound);
 
                 if(inMiddle(i,CRACK_SECTIONS,steps))
                     y += jumps(jump,JUMP_PROBABILITY);
@@ -134,11 +156,23 @@ abstract public class Brick  {
             crack.append(path,true);
         }
 
+        /**
+         * This is a method that is used to return random number between bound value and the negative bound value.
+         * @param bound bound value.
+         * @return returns random value.
+         */
         private int randomInBounds(int bound){
             int n = (bound * 2) + 1;
             return rnd.nextInt(n) - bound;
         }
 
+        /**
+         * This is a method that see if the integer is in the middle of the low and high bound.
+         * @param i integer.
+         * @param steps total steps.
+         * @param divisions divide by the numbers of division.
+         * @return returns true or false.
+         */
         private boolean inMiddle(int i,int steps,int divisions){
             int low = (steps / divisions);
             int up = low * (divisions - 1);
@@ -146,6 +180,12 @@ abstract public class Brick  {
             return  (i > low) && (i < up);
         }
 
+        /**
+         * This is a method that is used to see of the integer is bigger than the probability.
+         * @param bound bound of the number.
+         * @param probability probability of the brick.
+         * @return returns integer.
+         */
         private int jumps(int bound,double probability){
 
             if(rnd.nextDouble() > probability)
@@ -154,19 +194,26 @@ abstract public class Brick  {
 
         }
 
+        /**
+         * This is a method that is used to make random point when the ball hits the brick
+         * @param from point from.
+         * @param to point to.
+         * @param direction direction the point on the brick.
+         * @return
+         */
         private Point makeRandomPoint(Point from,Point to, int direction){
 
             Point out = new Point();
-            int pos;
+            int position;
 
             switch(direction){
                 case HORIZONTAL:
-                    pos = rnd.nextInt(to.x - from.x) + from.x;
-                    out.setLocation(pos,to.y);
+                    position = rnd.nextInt(to.x - from.x) + from.x;
+                    out.setLocation(position,to.y);
                     break;
                 case VERTICAL:
-                    pos = rnd.nextInt(to.y - from.y) + from.y;
-                    out.setLocation(to.x,pos);
+                    position = rnd.nextInt(to.y - from.y) + from.y;
+                    out.setLocation(to.x,position);
                     break;
             }
             return out;
@@ -174,10 +221,12 @@ abstract public class Brick  {
 
     }
 
+
+
     private static Random rnd;
 
     private String name;
-    Shape brickFace;
+    protected Shape brickFace;
 
     private Color border;
     private Color inner;
@@ -188,40 +237,76 @@ abstract public class Brick  {
     private boolean broken;
 
 
-    public Brick(String name, Point pos,Dimension size,Color border,Color inner,int strength){
+    /**
+     * @param name name of brick
+     * @param position position of brick
+     * @param size size of brick
+     * @param border border colour of brick
+     * @param inner inner colour of brick
+     * @param strength strength of brick
+     */
+    public Brick(String name, Point position,Dimension size,Color border,Color inner,int strength){
         rnd = new Random();
         broken = false;
         this.name = name;
-        brickFace = makeBrickFace(pos,size);
+        brickFace = makeBrickFace(position,size);
         this.border = border;
         this.inner = inner;
         this.fullStrength = this.strength = strength;
 
     }
 
-    protected abstract Shape makeBrickFace(Point pos,Dimension size);
+    /**
+     * This method is used to create the brick face.
+     * @param position position of the brick.
+     * @param size size of the brick.
+     * @return returns the brick shape.
+     */
+    protected abstract Shape makeBrickFace(Point position,Dimension size);
 
-    public  boolean setImpact(Point2D point , int dir){
+    /**
+     * THis is a method that tells if the brick is broken or not.
+     * @param point point of impact.
+     * @param impactDirection the direction of impact.
+     * @return returns is the brick is broken or not.
+     */
+    public  boolean setImpact(Point2D point , int impactDirection){
         if(broken)
             return false;
         impact();
         return  broken;
     }
 
+    /**
+     * This is an abstract method that will get the brick
+     * @return returns the brick
+     */
     public abstract Shape getBrick();
 
 
-
+    /**
+     * This is a method that is used to get the border colour of the brick.
+     * @return returns border colour of the brick.
+     */
     public Color getBorderColor(){
         return  border;
     }
 
+    /**
+     * This is a method that is used to get the inner colour of the brick.
+     * @return returns inner colour of the brick.
+     */
     public Color getInnerColor(){
         return inner;
     }
 
 
-    public final int findImpact(Ball b){
+    /**
+     * This is a method that is used to determine the direction of the impact.
+     * @param b object ball.
+     * @return returns the impact of the ball.
+     */
+    public final int findImpact(test.gameController.Ball b){
         if(broken)
             return 0;
         int out  = 0;
@@ -236,15 +321,25 @@ abstract public class Brick  {
         return out;
     }
 
+    /**
+     * This is a method that see if the brick is broken or not.
+     * @return returns if the brick is broken or not.
+     */
     public final boolean isBroken(){
         return broken;
     }
 
+    /**
+     * This is a method used to repair the bricks.
+     */
     public void repair() {
         broken = false;
         strength = fullStrength;
     }
 
+    /**
+     * This is a method that is used to set the brick's health.
+     */
     public void impact(){
         strength--;
         broken = (strength == 0);
