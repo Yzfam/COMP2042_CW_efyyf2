@@ -78,7 +78,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
         menuFont = new Font("Monospaced",Font.PLAIN,TEXT_SIZE);
 
-
         this.initialize();
         message = "";
 
