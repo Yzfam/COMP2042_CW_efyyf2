@@ -51,7 +51,7 @@ public class HomeMenu extends JComponent implements MouseListener, MouseMotionLi
     private static final float[] DASHES = {12,6};
 
     Toolkit t=Toolkit.getDefaultToolkit();
-    private Image image = t.getImage("src/test/image1.jpg");
+    private Image image = t.getImage("src/test/resources/image1.jpg");
 
 
 

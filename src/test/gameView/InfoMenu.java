@@ -32,7 +32,7 @@ public class InfoMenu extends JComponent implements MouseListener, MouseMotionLi
     private static final float[] DASHES = {12,6};
 
     Toolkit t=Toolkit.getDefaultToolkit();
-    private Image image = t.getImage("src/test/image4.jpg");
+    private Image image = t.getImage("src/test/resources/image4.jpg");
 
     private Rectangle menuFace;
     private Rectangle backButton;

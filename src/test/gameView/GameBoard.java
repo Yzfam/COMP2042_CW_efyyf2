@@ -41,7 +41,7 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
     private static final Color MENU_COLOR = new Color(255, 251, 0);
 
     Toolkit t=Toolkit.getDefaultToolkit();
-    private Image image = t.getImage("src/test/image3.jpg");
+    private Image image = t.getImage("src/test/resources/image3.jpg");
 
     private static final int DEF_WIDTH = 600;
     private static final int DEF_HEIGHT = 450;
