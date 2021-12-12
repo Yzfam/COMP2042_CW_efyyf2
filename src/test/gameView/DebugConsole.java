@@ -143,6 +143,5 @@ public class DebugConsole extends JDialog implements WindowListener{
      */
     @Override
     public void windowDeactivated(WindowEvent windowEvent) {
-
     }
 }
