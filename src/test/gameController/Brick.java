@@ -6,7 +6,6 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.Random;
 
-
 /**
  * This is an abstract class that controls everything about the brick.
  */
