@@ -66,7 +66,6 @@ public class GameBoard extends JComponent implements KeyListener,MouseListener,M
 
     private DebugConsole debugConsole;
 
-
     /**
      * This is a constructor that displays the screen when the game is running, showing the status of the game.
      * @param owner passing in the input the owner of the system.
